@@ -18,18 +18,6 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
   SMIInput<bool>? _playButtonInput;
   Artboard? _playButtonArtboard;
 
-  
-  void _initializeAlbumAnimation() {//
-    rootBundle.load('assets/SpinningAlbum.riv').then((data) {
-      final file = RiveFile.import(data);
-      final artboard = file.mainArtboard;
-      _albumController = SimpleAnimation('SpinningAnimation', autoplay: false);
-      artboard.addController(_albumController);
-      setState(() {
-        _playButtonArtboard = artboard;
-      });
-    });
-  }
 
   void _playTrackChangeAnimation(RiveAnimationController controller) {
     if (controller.isActive == false) {
@@ -42,21 +30,25 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
         _playButtonInput?.controller.isActive == false) {
       _playButtonInput?.value = true;
       _toggleWaveAnimation();
+      _toggleAlbumAnimation(); // Start album spinning animation
     } else if (_playButtonInput?.value == true &&
         _playButtonInput?.controller.isActive == false) {
       _playButtonInput?.value = false;
       _toggleWaveAnimation();
+      _toggleAlbumAnimation(); // Pause album spinning animation
     }
   }
 
   void _toggleWaveAnimation() => setState(
         () => _soundWaveController.isActive = !_soundWaveController.isActive,
   );
+  void _toggleAlbumAnimation() => setState(//
+        () => _albumController.isActive = !_albumController.isActive,
+  );
 
   @override
   void initState() {
     super.initState();
-    _initializeAlbumAnimation();//
 
     _prevButtonController = OneShotAnimation(
       'onPrev',
@@ -70,6 +62,11 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       'loopingAnimation',
       autoplay: false,
     );
+    _albumController = SimpleAnimation(
+      'playing',
+      autoplay: false,
+    );
+
 
     rootBundle.load('assets/PlayPauseButton.riv').then((data) {
       final file = RiveFile.import(data);
@@ -97,15 +94,32 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: 300,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    'assets/album_cover.png',
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Album Animation
+                  Transform.scale(
+                    scale: 1.2,
+                    child: Container(
+                      height: 300,
+                      child: RiveAnimation.asset(
+                        'assets/AlbumAnimation.riv',
+                        controllers: [
+                          _albumController,
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-                shape: BoxShape.circle,
+                    // Image Overlay
+                  Positioned(
+                    child: Image.asset(
+                      'assets/album_cover.png',
+                      height: 300, // Adjust the height as needed
+                    ),
+                  ),
+                ],
               ),
+
             ),
             SizedBox(
               height: 60,
