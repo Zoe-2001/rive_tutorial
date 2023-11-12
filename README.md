@@ -1,6 +1,9 @@
 ## Flutter Coding Challenge by Yuchen Dai:
 
-### This app is adapted from : [this post](https://resocoder.com/rive-flutter-animations). An album playing animation was added to the original project to showcase my understanding.
+### This app is adapted from : [this post](https://resocoder.com/rive-flutter-animations). An album playing animation was added to the original project to showcase my understanding. The animation will start/pause when you click on the play button.
+
+
+![img_1.png](img_1.png)
 
 <br />
 
